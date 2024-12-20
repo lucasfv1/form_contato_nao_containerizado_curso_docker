@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap version 5.3.1-dist -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+
+    <!-- Adiciona o Jquery, Popper e Bootstrap-->
+    <script src="{{ url_for('static', filename='jquery/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='popper/popper.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+
+    <title>Contato - Atendimento ao Cliente</title>
+
+    <style>
+        .bg-custom-blue {
+            background-color: #4169E1; /* Cor azul personalizada */
+        }
+        .overlay-img {
+            opacity: 0.3; /* Define a transparência da imagem */
+        }
+    </style>
+
+</head>
+
+<!-- bg-custom-blue aplica a cor de fundo azul personalizada -->
+<body class="bg-custom-blue">
+
+    <div class="container-fluid position-relative p-0">
+        <!-- Imagem de fundo -->
+        <img src="{{ url_for('static', filename='files/img/tmktg.jpg') }}" class="img-fluid position-absolute top-0 start-0 w-100 h-100 overlay-img">
+
+        <div class="container d-flex justify-content-center align-items-center min-vh-100 position-relative">
+            <div class="bg-white p-4 rounded shadow-sm col-lg-8 col-md-10">
+
+                <!-- Bloco para exibir mensagens de flash -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="mb-4">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <h2 class="mb-4 text-center">Atendimento ao Cliente</h2>
+
+                <form method="POST" action="{{ url_for('atendimento_cliente') }}">
+
+                    <!-- Inclui o CSRF token -->
+                    {{ form_contato.csrf_token }}
+
+                    <div class="form-group mb-3">
+                        <label>{{ form_contato.nome_cliente.label }}</label>
+                        {{ form_contato.nome_cliente(class="form-control") }}
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>{{ form_contato.cpf_cliente.label }}</label>
+                        {{ form_contato.cpf_cliente(class="form-control", id="cpf", maxlength="14") }}
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>{{ form_contato.email_cliente.label }}</label>
+                        {{ form_contato.email_cliente(class="form-control") }}
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>{{ form_contato.numero_pedido.label }}</label>
+                        {{ form_contato.numero_pedido(class="form-control") }}
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>{{ form_contato.assunto.label }}</label>
+                        {{ form_contato.assunto(class="form-control") }}
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label>{{ form_contato.mensagem.label }}</label>
+                        {{ form_contato.mensagem(class="form-control", rows=5) }}
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-secondary">Enviar</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const cpfInput = document.getElementById('cpf');
+
+    // Função para formatação de CPF
+    cpfInput.addEventListener('input', function(event) {
+        let value = cpfInput.value;
+
+        // Remove todos os caracteres não numéricos
+        value = value.replace(/\D/g, '');
+
+        // Adiciona a formatação
+        if (value.length <= 11) {
+            value = value.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})/, '$1-$2');
+        }
+
+        cpfInput.value = value;
+    });
+
+});
+
+
+</script>
+
+</body>
+</html>
